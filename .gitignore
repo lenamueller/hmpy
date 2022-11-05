@@ -1,0 +1,9 @@
+.vscode/settings.json
+
+code/hydrology/__pycache__/*
+
+data/*
+
+images/*
+
+tests/__pycache__/*
