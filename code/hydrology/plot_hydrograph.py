@@ -3,17 +3,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd 
 import datetime 
-import proplot as pplt
-import sys
 
 
 def remove_nan_from_list(list):
+    """Remove all np.Nan from a list."""
     return [x for x in list if x is not np.NaN]
 
 def remove_inf_from_list(list):
+    """Remove all np.Inf from a list."""
     return [x for x in list if x is not np.Inf]
 
 def clean_nan_inf(list):
+    """Remove all np.Nan and np.Inf from a list."""
     return remove_inf_from_list(remove_nan_from_list(list))
 
 def clean_nan_inf_2_rows(list1, list2):    
@@ -72,7 +73,6 @@ def start_and_end_of_data_gaps(missing_days):
     """Return a list of tuples with start and end datetime.datetime objects for data gaps
     defined as consecutive dates in a list. If the gap has the length 1, end equals start"""
     
-    missing_days = sorted(missing_days)
     diff_list = []
     if missing_days != []:
         start = missing_days[0]
@@ -103,7 +103,7 @@ def _cumulate(var):
 def subset_timeframe(dt,var, first_date, last_date):
     """Return sub lists of datetime.datetime objects and variable values 
      between two dates (included). """
-     
+    
     dt, var = clean_nan_inf_2_rows(dt, var)
     df = pd.DataFrame(list(zip(dt, var)), columns =['date', 'var'])
     
@@ -116,39 +116,37 @@ def subset_timeframe(dt,var, first_date, last_date):
     
     return dt_sub, var_sub
 
-def _list_of_doy_between_two_dates(date_start, date_end):
-    doy_begin = date_start.timetuple().tm_yday
-    doy_end = date_end.timetuple().tm_yday
-    if doy_end >= doy_begin:
-        doy_of_interest = np.arange(doy_begin, doy_end+1, 1)
-    else:
-        first_part = np.arange(doy_begin, 366, 1)
-        second_part = np.arange(1, doy_end+1, 1)
-        doy_of_interest = list(first_part) + list(second_part)
-    
-    return doy_of_interest
+def subset_period(dt, var, begin_day=1, begin_month=1 , end_day=31, end_month=12):
+    """Return subsets of the input lists dt (datetime.datetime objects) and var 
+    (float values) which fit the period definied by period_begin and period_end."""
 
-def subset_period(dt, var, period_begin, period_end):
-    doy = [x.timetuple().tm_yday for x in dt]
-    doy_of_interest = _list_of_doy_between_two_dates(period_begin, period_end)
+    assert begin_month <= end_month, "subset_period: period_end_month musst be larger than period_begin_month"
+    assert begin_day <= end_day, "subset_period: period_end_day musst be larger than period_begin_day"
     
     dt_sub, var_sub = [], []
     for i in range(len(dt)):
-        doy_i = doy[i]
-        if doy_i in doy_of_interest:
-            dt_sub.append(dt[i])
-            var_sub.append(var[i])
-
+        dt_i = dt[i]
+        var_i = var[i]
+        year = dt_i.year
+        
+        begin = datetime.datetime(year, begin_month, begin_day)
+        end = datetime.datetime(year, end_month, end_day)
+        if begin <= dt_i <= end:
+            dt_sub.append(dt_i)
+            var_sub.append(var_i)
+            
     return dt_sub, var_sub
 
-def principal_values(dt, va, period_begin, period_end, timeframe_begin, timeframe_end):
+def principal_values(dt, var, period_begin, period_end, timeframe_begin, timeframe_end):
     """Return principal values of a variable (e.g. discharge) based
     on a time frame and period (datetime.datetime objects).
     e.g. period from 1.11. bis 30.11. and timeframe 2000 - 2020 returns principial 
     values for all novembers between 2000 and 2020"""
     
+    assert len(dt) == len(var), "principal_values args have different lenghts"
+    
     dt, va = subset_timeframe(dt, va, timeframe_begin, timeframe_end)
-    dt, va = subset_period(dt, va, period_begin, period_end)
+    dt, va = subset_period(dt, va, period_begin, period_end) # todo
     year = [int(date_i.year) for date_i in dt]
     
     df = pd.DataFrame(list(zip(year, va)), columns =['year', 'va'])
@@ -163,11 +161,13 @@ def principal_values(dt, va, period_begin, period_end, timeframe_begin, timefram
     
     return hhx, hx, mx, nx, nnx
 
-def plot_hydrograph(fn, dt, va):
+def plot_hydrograph(fn, dt, var):
     """Plot the hydrograph with data gaps from a list of float values (e.g. discharge
     in m^3/s and a list of datetime.datetime objects"""
     
-    _, ax = plt.subplots(ncols=1, nrows=1, figsize=(10,3))
+    assert len(dt) == len(var), "plot_hydrograph args dt and var have different lenghts"
+    
+    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10,3))
     
     # plot data gaps
     miss = missing_dates(dt, create_datetime_list(start_date(dt), end_date(dt)))
@@ -177,17 +177,19 @@ def plot_hydrograph(fn, dt, va):
             ax.axvspan(begin,end, alpha=0.5, facecolor='red', label="data gap")
     
     # plot hydrograph
-    plt.bar(dt, va)
+    plt.bar(dt, var)
     plt.savefig(fn, dpi=800, bbox_inches="tight")
     plt.close()
     
-    return 0
+    return fig
 
-def plot_summation_curve(fn, dt, va):
+def plot_summation_curve(fn, dt, var):
     """Plot the summation curve with data gaps from a list of float values (e.g. 
     discharge in m^3/s) and a list of datetime.datetime objects. """
     
-    _, ax = plt.subplots(ncols=1, nrows=1, figsize=(10,3))
+    assert len(dt) == len(var), "plot_summation_curve args dt and var have different lenghts"
+    
+    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10,3))
     
     # plot data gaps
     miss = missing_dates(dt, create_datetime_list(start_date(dt), end_date(dt)))
@@ -197,15 +199,18 @@ def plot_summation_curve(fn, dt, va):
             ax.axvspan(begin,end, alpha=0.5, facecolor='red', label="data gap")
         
     # plot hydrograph
-    plt.bar(dt, _cumulate(va))
+    plt.bar(dt, _cumulate(var))
     plt.savefig(fn, dpi=800, bbox_inches="tight")
     plt.close()
     
-    return 0
+    return fig
 
 def plot_duration_curve(fn, dt, var, year, descending):
     """Plot the duration curve for a given year."""
-    _, var_sub = subset_timeframe(dt, var, 
+    
+    assert len(dt) == len(var), "plot_duration_curve args dt and var have different lenghts"
+
+    fig, var_sub = subset_timeframe(dt, var, 
                                       first_date=datetime.datetime(year, 1, 1), 
                                       last_date=datetime.datetime(year, 12, 31)
                                       )
@@ -215,4 +220,4 @@ def plot_duration_curve(fn, dt, var, year, descending):
     plt.savefig(fn, dpi=800, bbox_inches="tight")
     plt.close()
     
-    return 0
+    return fig
