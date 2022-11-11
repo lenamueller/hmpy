@@ -1,4 +1,4 @@
-,date,water_level,discharge_m3_s
+index,date,water_level,discharge_m3_s
 0,2018-10-16,62.0,0.25
 1,2018-10-17,62.0,0.25
 2,2018-10-18,62.0,0.26
