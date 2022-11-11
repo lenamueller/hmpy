@@ -16,6 +16,8 @@ class MyTimeSeries:
         
     Merthods
     ----------
+    __init__:
+        Creates an instance with given data.
     get_status:
         Returns the status.
     set_status_ready:
@@ -55,6 +57,8 @@ class MyTimeStamp:
         
     Merthods
     ----------
+    __init__:
+        Creates an instance with given data.
     get_status:
         Returns the status.
     set_status_ready:
