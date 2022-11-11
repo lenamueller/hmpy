@@ -1,5 +1,8 @@
 .vscode/settings.json
-code/hydrology/__pycache__/*
-images/*
-tests/__pycache__/*
+
 venv/*
+
+tests/__pycache__/*
+cleaning/__pycache__/*
+analysis/__pycache__/*
+visualization/__pycache__/*
