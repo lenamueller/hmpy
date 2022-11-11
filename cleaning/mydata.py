@@ -24,9 +24,9 @@ class MyTimeSeries:
         Sets the status to "raw".
     """
     
-    def __init__(self):
+    def __init__(self, data:pd.DataFrame):
         
-        self.data:pd.DataFrame = pd.DataFrame()
+        self.data:pd.DataFrame = data
         self.status:str = "raw"
     
     def get_status(self):
@@ -63,9 +63,9 @@ class MyTimeStamp:
         Sets the status to "raw".
     """
     
-    def __init__(self):
+    def __init__(self, data:np.array):
         
-        self.data:np.array = np.array()
+        self.data:np.array = data
         self.status:str = "raw"
         
     def get_status(self):
