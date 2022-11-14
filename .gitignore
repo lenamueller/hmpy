@@ -6,4 +6,7 @@ tests/__pycache__/*
 cleaning/__pycache__/*
 analysis/__pycache__/*
 visualization/__pycache__/*
+
 visualization/plot.py
+requirements_backup_2022_11_14
+todo.md
