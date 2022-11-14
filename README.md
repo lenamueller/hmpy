@@ -1,64 +1,18 @@
 <img align="right" src="images/logo.svg" alt="logo" width="175"/>   
 
-[![Repo status - Active](https://img.shields.io/badge/Repo_status-Active-00aa00)](https://)
-[![python - 3.10.1](https://img.shields.io/badge/python-3.10.1-ffe05c?logo=python&logoColor=4685b7)](https://)
-[![field of application - meteorology, hydrology](https://img.shields.io/badge/field_of_application-meteorology%2C_hydrology-00aaff)](https://)
+[![Repo status - in process](https://img.shields.io/static/v1?label=Repo+status&message=in+process&color=ff8300&style=for-the-badge)](https://)
+[![Python - 3.10.8](https://img.shields.io/static/v1?label=Python&message=3.10.8&color=yellow&style=for-the-badge&logo=python)](https://)
+[![field of application - hydrology, meteorology](https://img.shields.io/static/v1?label=field+of+application&message=hydrology%2C+meteorology&color=blue&style=for-the-badge)](https://)
 
 
 An open source library for common hydrological and meteorological issues.
 
-# Content
-  ## 1. cleaning: explorative data analysis and data correction
-1.  EDA: structure investigation:
-- [ ] format
-- [ ] size
-- [ ] data types: numerical (continuous, discrete) / categorical (binary,ordinal)
-- [ ] scales
-2. EDA: quality investigation:
-- [ ] data gap (e.g. missing date or missing value)
-- [ ] missing values (e.g. -999)
-- [ ] duplicates
-- [ ] homogenity test of time series
-3. EDA: content investigation:
-- [ ] frequency distribution
-- [ ] correlation
-- [ ] patterns
-4. correction
-- [ ] delete duplicates and irrelevant information
-- [ ] At which levelof completness data rows or cols should be deleted?
-- [ ] correction: mean, fit to periodogram, idw, kriging, inhomogenity
-- [ ] precipitation correction after Richter
+# Implemented, test covered functions
 
-## 2. analysis
-basic statistics
-- [ ] mean, mode, median, stdev, range, variance, 
-- [ ] empirical distribution
-- [ ] parameters for fitting a theoretical distribution
+### analysis
+- ```principal_values```: derive principal values from a time series HHX, HX, MHX, MX, MNX, NX, NNX
+- `subset_timeframe`: subdivide time series based on a timeframe
+- `subset_period`: subdivide time series based on a period
 
-hydrology
-- [x] principal values
-- [ ] partial series
-- [ ] independent events
-- [ ] summation curve
-- [ ] duration curve
-
-meteorology
-- [ ] independent events
-
-## 3. vizualization (reports, plots)
-basic
-- [ ] empirical and theoretical distribution
-
-hydrology
-- [x] hydroraph 
-- [ ] hydrograph with precipitation at top axis
-- [ ] partial series
-- [x] summation curve
-- [x] duration curve
-
-meteorology
-- [ ] atmospheric sounding
-- [ ] wind rose
-
-report
-- [ ] write report
+### cleaning
+### visualization
