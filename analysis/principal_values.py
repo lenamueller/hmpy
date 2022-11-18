@@ -9,10 +9,12 @@ def principal_values(df:pd.DataFrame,
                      timeframe_begin:datetime.datetime, 
                      timeframe_end:datetime.datetime,
                      varname:str,
+                     aggr_col_name:str = "",
                      months:list[int] = [1,2,3,4,5,6,7,8,9,10,11,12]
                      ):
     """Returns principal values HHX, HX, MHX, MX, MNX, NX, NNX for a given column 
-    name "varname", timeframe and period.
+    name "varname" aggregated by "column aggr_col_name" and restricted by a given 
+    timeframe and period.
      
     HHX: highest value ever observed
     HX: highest value within timeframe and months
@@ -25,6 +27,7 @@ def principal_values(df:pd.DataFrame,
     Args:
         df (pd.DataFrame): contains at least "date" as index and <varname> as variable
         varname (str): column name to derive principle values (e.g. "discharge")
+        aggr_col_name (str): column name for aggregation (e.g. "hyd_year" derived from function hyd_year)
         timeframe_begin (datetime.datetime): first day of time series
         timeframe_end (datetime.datetime): last day of time series
         months (list[int], optional): month index. Defaults to [1,2,3,4,5,6,7,8,9,10,11,12].
@@ -40,11 +43,14 @@ def principal_values(df:pd.DataFrame,
     df = subset_timeframe(df, date_start=timeframe_begin, date_end=timeframe_end)
     df = subset_period(df, months=months)
 
-    # Aggregate by year
-    df["year"] = df.index.year
-    df_max = df.groupby(["year"]).max()
-    df_min = df.groupby(["year"]).min()
-    df_mean = df.groupby(["year"]).mean()
+    # Use year from index to aggregate if no other aggregation column name is given.
+    if aggr_col_name == "":
+        df["year"] = df.index.year
+        aggr_col_name = "year"
+    
+    df_max = df.groupby([aggr_col_name]).max()
+    df_min = df.groupby([aggr_col_name]).min()
+    df_mean = df.groupby([aggr_col_name]).mean()
 
     # Calculate other principal values    
     hx = np.round(np.max(df[varname]),2)

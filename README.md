@@ -10,9 +10,11 @@ An open source library for common hydrological and meteorological issues.
 # Implemented, test covered functions
 
 ### analysis
-- ```principal_values```: derive principal values from a time series HHX, HX, MHX, MX, MNX, NX, NNX
+- `hyd_year`: determine hydrological year based on a given start date and add column "hyd_year" to input DataFrame
+- `principal_values`: derive principal values from a time series HHX, HX, MHX, MX, MNX, NX, NNX
 - `subset_timeframe`: subdivide time series based on a timeframe
 - `subset_period`: subdivide time series based on a period
+
 
 ### cleaning
 ### visualization

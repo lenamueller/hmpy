@@ -8,6 +8,7 @@ sys.path.insert(1, 'analysis')
 print(sys.path)
 from subset import subset_period, subset_timeframe
 from principal_values import principal_values
+from hyd_year import hyd_year
 
 
 def test_subset_timeframe():
@@ -46,24 +47,80 @@ def test_subset_period():
        df_test = subset_period(df, [2,3])
        assert_frame_equal(df_test, df_ref)
 
+def test_hyd_year():
+       df = pd.DataFrame({
+              "date":[datetime.datetime(1999,12,1), 
+                     datetime.datetime(2000,1,2), 
+                     datetime.datetime(2001,1,1), 
+                     datetime.datetime(2001,1,2),
+                     datetime.datetime(2001,3,3),
+                     datetime.datetime(2010,1,2)],
+              "discharge":[1,2,3,4,5,6]
+              })
+       df = df.set_index("date")
+       df_ref = pd.DataFrame({
+              "date":[datetime.datetime(1999,12,1), 
+                     datetime.datetime(2000,1,2), 
+                     datetime.datetime(2001,1,1), 
+                     datetime.datetime(2001,1,2),
+                     datetime.datetime(2001,3,3),
+                     datetime.datetime(2010,1,2)],
+              "discharge":[1,2,3,4,5,6],
+              "hyd_year": [2000,2000,2001,2001,2001,2010]
+              })
+       df_ref = df_ref.set_index("date")
+       df_test = hyd_year(df, hyd_year_begin_month=11, hyd_year_begin_day=1)
+       print(df_test)
+       assert_frame_equal(df_test, df_ref)
+       
+
 def test_principal_values():
        
        df = pd.DataFrame({
-              "date":[datetime.datetime(2000,1,1), 
+              "date":[datetime.datetime(1999,12,1), 
                       datetime.datetime(2000,1,2), 
                       datetime.datetime(2001,1,1), 
                       datetime.datetime(2001,1,2),
                       datetime.datetime(2001,3,3),
                       datetime.datetime(2010,1,2)],
-              "discharge":[1,2,3,4,5,6]
+              "discharge":[1,2,3,4,5,6],
+              "hyd_year" : [2000,2000,2001,2001,2001,2010]
               })
        df = df.set_index("date")
+       
        tuple_ref = (6.0, 4.0, 3.0, 2.5, 2.0, 1.0, 1.0)
        tuple_test = principal_values(df=df, 
                                      varname="discharge", 
-                                     timeframe_begin=datetime.datetime(2000,1,1), 
+                                     aggr_col_name = "hyd_year",
+                                     timeframe_begin=datetime.datetime(1999,1,1), 
                                      timeframe_end=datetime.datetime(2002,1,1),
-                                     months=[1,2]
+                                     months=[12,1,2]
+                                     )
+       
+       assert tuple_test == tuple_ref
+
+
+def test_principal_values_2():
+       
+       df = pd.DataFrame({
+              "date":[datetime.datetime(1999,12,1), 
+                      datetime.datetime(2000,1,2), 
+                      datetime.datetime(2001,1,1), 
+                      datetime.datetime(2001,1,2),
+                      datetime.datetime(2001,3,3),
+                      datetime.datetime(2010,1,2)],
+              "discharge":[1,2,3,4,5,6],
+              "hyd_year" : [2000,2000,2001,2001,2001,2010]
+              })
+       df = df.set_index("date")
+       
+       tuple_ref = (6.0, 4.0, 2.33, 2.17, 2.0, 1.0, 1.0)
+       tuple_test = principal_values(df=df, 
+                                     varname="discharge", 
+                                     aggr_col_name = "",
+                                     timeframe_begin=datetime.datetime(1999,1,1), 
+                                     timeframe_end=datetime.datetime(2002,1,1),
+                                     months=[12,1,2]
                                      )
        
        assert tuple_test == tuple_ref
