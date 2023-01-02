@@ -82,3 +82,65 @@ class BasicStatistics:
         c = Counter(self.input)
         mode_list = [k for k, v in c.items() if v == c.most_common(1)[0][1]]
         return mode_list
+    
+    def range(self):
+        """Returns the range of an input list of float numbers.
+
+        Returns:
+            float: range
+        """
+        return (max(self.input)-min(self.input))
+
+    def stdev(self, biased):
+        """Returns biased or unbiased standard deviation of an input 
+        list of float numbers.
+
+        Args:
+            biased (bool): with or without bias correction
+
+        Returns:
+            float: standard deviation
+        """
+        mean = self.mean_arithmetic()
+        n = len(self.input)
+        deviation = [x-mean for x in self.input]
+        deviation_squared = [x**2 for x in deviation]
+        
+        if biased:
+            return (sum(deviation_squared)/n)**(1/2)
+        else:
+            return (sum(deviation_squared)/(n-1))**(1/2)
+    
+    def var(self, biased):
+        """Returns biased or unbiased variance of an input 
+        list of float numbers.
+
+        Args:
+            biased (bool): with or without bias correction
+
+        Returns:
+            float: variance
+        """
+        mean = self.mean_arithmetic()
+        n = len(self.input)
+        deviation_squared = [(x-mean)**2 for x in self.input]
+        variance_biased = sum(deviation_squared)/n
+        variance_unbiased = variance_biased*n/(n-1)
+        
+        if biased:
+            return variance_biased
+        else:
+            return variance_unbiased
+        
+    def skewness(self, biased):
+        n = len(self.input)
+        mean = self.mean_arithmetic()
+        stdev = self.stdev(biased=True)
+        deviation_3 = [(x-mean)**3 for x in self.input]
+        skewness_biased = sum(deviation_3)/(n*stdev**3)
+        skewness_unbiased = skewness_biased*(n*n)/((n-1)*(n-2))
+
+        if biased:
+            return skewness_biased
+        else:
+            return skewness_unbiased

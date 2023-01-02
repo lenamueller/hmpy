@@ -166,3 +166,31 @@ def test_mode_single():
 def test_mode_multiple():
        bs = BasicStatistics(input=[1,2,3])
        assert [1,2,3] == bs.mode()
+       
+def test_range():
+       bs = BasicStatistics(input=[1,2,3])
+       assert 2 == bs.range()
+
+def test_stdev_biased():
+       bs = BasicStatistics(input=[1,2,3])
+       assert (2/3)**(1/2) == bs.stdev(biased=True)
+
+def test_stdev_unbiased():
+       bs = BasicStatistics(input=[1,2,3])
+       assert 1/1 == round(bs.stdev(biased=False),4)
+
+def test_var_biased():
+       bs = BasicStatistics(input=[1,2,3])
+       assert 2/3 == bs.var(biased=True)
+
+def test_var_unbiased():
+       bs = BasicStatistics(input=[1,2,3])
+       assert 1/1 == bs.var(biased=False)
+
+def test_skewness_biased():
+       bs = BasicStatistics(input=[1,1,1,5])
+       assert 1.1547 == round(bs.skewness(biased=True),4)
+
+def test_skewness_unbiased():
+       bs = BasicStatistics(input=[1,1,1,5])
+       assert 3.0792 == round(bs.skewness(biased=False),4)

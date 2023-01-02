@@ -12,6 +12,7 @@ An open source library for common hydrological and meteorological issues.
 - `principal_values`: derive principal values from a time series HHX, HX, MHX, MX, MNX, NX, NNX
 - `subset_timeframe`: subdivide time series based on a timeframe
 - `subset_period`: subdivide time series based on a period
+- class `BasicStatistics`: calculation of means (`mean_arithmetic`, `mean_geometric`, `mean_exponential`, `mean_harmonic`, `mean_median`) and mode (`mode`), (biased/ unbiased) standard deviation (`stdev`), (biased/ unbiased) variance (`variance`), (biased/ unbiased) skewness (`skewness`)
 
 
 ### cleaning
