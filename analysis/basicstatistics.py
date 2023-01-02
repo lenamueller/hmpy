@@ -112,8 +112,8 @@ class BasicStatistics:
             return (sum(deviation_squared)/(n-1))**(1/2)
     
     def var(self, biased):
-        """Returns biased or unbiased variance of an input 
-        list of float numbers.
+        """Returns biased or unbiased variance of an input list
+        of float numbers.
 
         Args:
             biased (bool): with or without bias correction
@@ -133,6 +133,15 @@ class BasicStatistics:
             return variance_unbiased
         
     def skewness(self, biased):
+        """Returns biased or unbiased skewness of an input list 
+        of float numbers.
+
+        Args:
+            biased (bool): with or without bias correction
+
+        Returns:
+            float: skewness
+        """
         n = len(self.input)
         mean = self.mean_arithmetic()
         stdev = self.stdev(biased=True)
