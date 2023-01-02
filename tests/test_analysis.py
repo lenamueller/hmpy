@@ -2,6 +2,7 @@ import pandas as pd
 import pytest 
 import datetime
 import sys 
+import statistics
 from pandas.testing import assert_frame_equal
 
 sys.path.insert(1, 'analysis')
@@ -9,6 +10,7 @@ print(sys.path)
 from subset import subset_period, subset_timeframe
 from principal_values import principal_values
 from hyd_year import hyd_year
+from basicstatistics import BasicStatistics
 
 
 def test_subset_timeframe():
@@ -124,3 +126,43 @@ def test_principal_values_2():
                                      )
        
        assert tuple_test == tuple_ref
+       
+
+
+def test_mean_arithmetic():
+       l = [1,2,3,4,5,6]
+       bs = BasicStatistics(input=l)
+       assert statistics.mean(l) == bs.mean_arithmetic()
+
+def test_mean_geometric():
+       l = [1,2,3,4,5,6]
+       bs = BasicStatistics(input=l)
+       assert statistics.geometric_mean(l) == bs.mean_geometric()
+       
+def test_mean_exponential():
+       l = [1,2,3]
+       bs = BasicStatistics(input=l)
+       assert 2,1602 == round(bs.mean_exponential(m=2),4)
+
+def test_mean_harmonic():
+       l = [1,2,3,4,5,6]
+       bs = BasicStatistics(input=l)
+       assert statistics.harmonic_mean(l) == bs.mean_harmonic()
+
+def test_mean_median_even():
+       l = [1,2,3,4,5,6]
+       bs = BasicStatistics(input=l)
+       assert statistics.median(l) == bs.mean_median()
+
+def test_mean_median_odd():
+       l = [1,2,3,4,5]
+       bs = BasicStatistics(input=l)
+       assert statistics.median(l) == bs.mean_median()
+
+def test_mode_single():
+       bs = BasicStatistics(input=[1,3,3])
+       assert [3] == bs.mode()
+       
+def test_mode_multiple():
+       bs = BasicStatistics(input=[1,2,3])
+       assert [1,2,3] == bs.mode()
