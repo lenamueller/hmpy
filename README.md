@@ -1,7 +1,10 @@
 <img align="right" src="images/logo.svg" alt="logo" width="175"/>   
 
 [![Repo status - in process](https://img.shields.io/static/v1?label=Repo+status&message=in+process&color=90EE90&style=for-the-badge)](https://)
+[![contributions - welcome](https://img.shields.io/static/v1?label=contributions&message=welcome&color=90EE90&style=for-the-badge)](https://)
 [![Python - 3.10.8](https://img.shields.io/static/v1?label=Python&message=3.10.8&color=yellow&style=for-the-badge&logo=python)](https://)
+[![OS - Linux](https://img.shields.io/badge/OS-Linux-blue?style=for-the-badge&logo=linux&logoColor=white)](https://)
+[![license - MIT](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge&)](https://lbesson.mit-license.org/)
 
 An open source library for common hydrological and meteorological issues.
 
