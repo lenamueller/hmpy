@@ -11,18 +11,18 @@ class Status(Enum):
 
 class NumericalList:
 
-    def __init__(self, input: list[float], status: Status=Status.RAW):
+    def __init__(self, input: list[float], status: Status = Status.RAW):
         """Constructor
 
         Args:
             input (list[float]): numerical values
-            status (Status, optional): Status of the NumericalList, which can be set 
-                or turned to Status.READY, if the data is been cleaned. 
-                Defaults to Status.RAW.
+            status (Status, optional): Status of the NumericalList,
+                which can be set or turned to Status.READY, if the
+                data is been cleaned.Defaults to Status.RAW.
         """
-        
+
         self.input: list[float] = input
-        self.status: Status = Status.RAW
+        self.status: Status = status
 
     def set_status_ready(self):
         """Change status of input list."""
