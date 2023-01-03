@@ -1,8 +1,15 @@
 import numpy as np
 from collections import Counter
 
+from enum import Enum
 
-class BasicStatistics:
+
+class Status(Enum):
+    RAW = 0
+    READY = 1
+
+
+class NumericalList:
 
     def __init__(self, input):
         """Constructor for input list.
@@ -11,6 +18,11 @@ class BasicStatistics:
             input (list): input data
         """
         self.input = input
+        self.status = Status.RAW
+
+    def set_status_ready(self):
+        """Change status of input list."""
+        self.status = Status.READY
 
     def mean_arithmetic(self):
         """Returns the arithmetic mean of an input list of float numbers.

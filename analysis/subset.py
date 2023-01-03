@@ -2,9 +2,10 @@ import pandas
 import datetime
 
 
-def subset_timeframe(df:pandas.DataFrame, 
-                     date_start:datetime.datetime, 
-                     date_end:datetime.datetime):
+def subset_timeframe(
+        df: pandas.DataFrame,
+        date_start: datetime.datetime,
+        date_end: datetime.datetime):
     """Returns a sub-DataFrame based on a start and end date (both included).
 
     Args:
@@ -16,15 +17,17 @@ def subset_timeframe(df:pandas.DataFrame,
         pd.DataFrame: sub-DataFrame with "date" as index
     """
 
-    # Return sub lists of datetime.datetime objects and variable values between two dates (included).
     return df.loc[date_start:date_end]
 
-def subset_period(df:pandas.DataFrame, months:list[int]=[1,2,3,4,5,6,7,8,9,10,11,12]):
+
+def subset_period(
+        df: pandas.DataFrame,
+        months: list[int] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]):
     """Returns a sub-DataFrame based on given months.
 
     Args:
         df (pd.DataFrame): contains at least "date" as index
-        months (list[int]): month index (e.g. 1 for January). 
+        months (list[int]): month index (e.g. 1 for January).
                             Defaults to [1,2,3,4,5,6,7,8,9,10,11,12].
 
     Returns:
