@@ -11,14 +11,18 @@ class Status(Enum):
 
 class NumericalList:
 
-    def __init__(self, input):
-        """Constructor for input list.
+    def __init__(self, input: list[float], status: Status=Status.RAW):
+        """Constructor
 
         Args:
-            input (list): input data
+            input (list[float]): numerical values
+            status (Status, optional): Status of the NumericalList, which can be set 
+                or turned to Status.READY, if the data is been cleaned. 
+                Defaults to Status.RAW.
         """
-        self.input = input
-        self.status = Status.RAW
+        
+        self.input: list[float] = input
+        self.status: Status = Status.RAW
 
     def set_status_ready(self):
         """Change status of input list."""
@@ -103,7 +107,7 @@ class NumericalList:
         """
         return (max(self.input)-min(self.input))
 
-    def stdev(self, biased):
+    def stdev(self, biased: bool):
         """Returns biased or unbiased standard deviation of an input
         list of float numbers.
 
@@ -123,7 +127,7 @@ class NumericalList:
         else:
             return (sum(deviation_squared)/(n-1))**(1/2)
 
-    def var(self, biased):
+    def var(self, biased: bool):
         """Returns biased or unbiased variance of an input list
         of float numbers.
 
@@ -144,7 +148,7 @@ class NumericalList:
         else:
             return variance_unbiased
 
-    def skewness(self, biased):
+    def skewness(self, biased: bool):
         """Returns biased or unbiased skewness of an input list
         of float numbers.
 
