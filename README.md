@@ -12,8 +12,8 @@ An open source library for common hydrological and meteorological issues.
 - `subset_period`: subdivide time series based on a period
 - `hyd_year`: add column "hyd_year" (hydrological year) based on a given start day and month
 - `principal_values`: derive principal values (HHX, HX, MHX, MX, MNX, NX, NNX) from a time series
-- extract partial series: TODO
-- extract independent events: TODO
+- extract partial series: TODO #5
+- extract independent events: TODO #6
 
 ### class `NumericalList`
 #### basic statistics
@@ -21,26 +21,26 @@ An open source library for common hydrological and meteorological issues.
 - `mode`: mode
 - `stdev`: (un-) biased standard deviation
 - `variance`: (un-) biased variance
-- `skewness`: (un-) biased skewness)
-- kurtosis: TODO
+- `skewness`: (un-) biased skewness
+- kurtosis: TODO #7
+- report: TODO #20
 
 
 #### distributions
-- calculate empirical distribution: TODO
-- fitting theoretical distribution: TODO
+- calculate empirical distribution: TODO #8
+- fitting theoretical distribution: TODO #4
 ### class `MultiNumericalList`
-- covariance: TODO
-- correlation: TODO
+- covariance: TODO #9
+- correlation: TODO #10
 
 ## cleaning
-- consistency: data gaps, missing values, duplicate: TODO
-- homogenity: TODO
-- precipitation correction after Richter: TODO
+- consistency: data gaps, missing values, duplicate: TODO #12
+- homogenity: TODO #13
+- precipitation correction after Richter: TODO #14
  
 ## visualization
-- plot empirical and theoretical distribution: TODO
-- plot hydrograph: TODO
-- plot summation curve: TODO
-- plot duration curve: TODO
-- plot wind rose: TODO
-- plot atmospheric sounding: TODO
+- plot hydrograph: TODO #15
+- plot summation curve: TODO #16
+- plot duration curve: TODO #17
+- plot wind rose: TODO #18
+- plot atmospheric sounding: TODO #19
