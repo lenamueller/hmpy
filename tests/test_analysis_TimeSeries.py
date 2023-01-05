@@ -88,19 +88,19 @@ def test_hyd_year():
     assert_frame_equal(df_test, df_ref)
 
 
-def test_principal_values():
+def test_principal_values_given_aggr_col_name():
 
     # create test tuple
     df = pd.DataFrame({
             "date": [
                 datetime.datetime(1999, 12, 1),
                 datetime.datetime(2000, 1, 2),
-                datetime.datetime(2001, 12, 1),
+                datetime.datetime(2001, 1, 1),
                 datetime.datetime(2001, 1, 2),
                 datetime.datetime(2001, 3, 3),
                 datetime.datetime(2010, 1, 2)],
             "discharge": [1, 2, 3, 4, 5, 6],
-            "hyd_year": [2000, 2000, 2001, 2001, 2001, 2010]
+            "hyd_year": [1999, 1999, 2001, 2000, 2000, 2009]
             }).set_index("date")
 
     ts = TimeSeries(df=df)
@@ -112,12 +112,11 @@ def test_principal_values():
             months=[12, 1, 2])
 
     # create reference tuple
-    tuple_ref = (6.0, 4.0, 3.0, 2.5, 2.0, 1.0, 1.0)
+    tuple_ref = (6.0, 4.0, 3.0, 2.83, 2.67, 1.0, 1.0)
 
     assert tuple_test == tuple_ref
 
-
-def test_principal_values_2():
+def test_principal_values_no_given_aggr_col_name():
 
     # create test tuple
     df = pd.DataFrame({

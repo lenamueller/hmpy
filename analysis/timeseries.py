@@ -137,8 +137,9 @@ class TimeSeries:
         # Use year from index to aggregate if no other aggregation
         # column name is given.
         if aggr_col_name == "":
-            self.df["year"] = self.df.index.year
             aggr_col_name = "year"
+            self.df[aggr_col_name] = self.df.index.year
+            
 
         df_max = self.df.groupby([aggr_col_name]).max()
         df_min = self.df.groupby([aggr_col_name]).min()
