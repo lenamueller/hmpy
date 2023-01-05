@@ -68,11 +68,8 @@ def test_hyd_year():
             "date": [
                 datetime.datetime(1999, 12, 1),
                 datetime.datetime(2000, 1, 2),
-                datetime.datetime(2001, 1, 1),
-                datetime.datetime(2001, 1, 2),
-                datetime.datetime(2001, 3, 3),
-                datetime.datetime(2010, 1, 2)],
-            "discharge": [1, 2, 3, 4, 5, 6]
+                datetime.datetime(2000, 12, 1)],
+            "discharge": [1, 2, 3]
             }).set_index("date")
 
     ts = TimeSeries(df=df)
@@ -83,12 +80,9 @@ def test_hyd_year():
             "date": [
                 datetime.datetime(1999, 12, 1),
                 datetime.datetime(2000, 1, 2),
-                datetime.datetime(2001, 1, 1),
-                datetime.datetime(2001, 1, 2),
-                datetime.datetime(2001, 3, 3),
-                datetime.datetime(2010, 1, 2)],
-            "discharge": [1, 2, 3, 4, 5, 6],
-            "hyd_year": [2000, 2000, 2001, 2001, 2001, 2010]
+                datetime.datetime(2000, 12, 1),],
+            "discharge": [1, 2, 3],
+            "hyd_year": [1999, 1999, 2000]
             }).set_index("date")
 
     assert_frame_equal(df_test, df_ref)
@@ -101,7 +95,7 @@ def test_principal_values():
             "date": [
                 datetime.datetime(1999, 12, 1),
                 datetime.datetime(2000, 1, 2),
-                datetime.datetime(2001, 1, 1),
+                datetime.datetime(2001, 12, 1),
                 datetime.datetime(2001, 1, 2),
                 datetime.datetime(2001, 3, 3),
                 datetime.datetime(2010, 1, 2)],
