@@ -12,3 +12,5 @@ requirements_backup_2022_11_14
 todo.md
 main.py
 other.py
+
+docs/*
