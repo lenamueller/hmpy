@@ -31,6 +31,12 @@ class EstimateVariability(Enum):
     IQR = 6
 
 
+class Distribution(Enum):
+    FREQ_TABLE = 0
+    COEFFICIENT_OF_SKEWNESS = 1
+    COEFFICIENT_OF_KURTOSIS = 2
+    MODE = 3
+
 class NumericalList:
 
     def __init__(self, input: list[float], status: Status = Status.RAW):
@@ -60,7 +66,7 @@ class NumericalList:
             m: float = None,
             per: int = None
             ):
-        """Returns the mean according the the formula.
+        """Returns an estimate of location according the the formula.
         Possible types are:
 
         EstimateLocation.ARITHMETIC_MEAN
@@ -74,7 +80,7 @@ class NumericalList:
         EstimateLocation.PERCENTILE
 
         Args:
-            formula (EstimateLocation): mean formula
+            formula (EstimateLocation): name of formula to apply
             trim_p (int): number of smallest and largest elements
                 from the numerical list which will be ignored
                 (TRIMMED_ARITHMETIC_MEAN)
@@ -84,7 +90,7 @@ class NumericalList:
             per (int): percentile
 
         Returns:
-            float: mean value
+            float: estimate
         """
 
         match formula:
@@ -127,8 +133,26 @@ class NumericalList:
             formula: EstimateVariability,
             biased: bool = None
             ):
+        """Returns an estimate of variability according the the formula.
+        Possible types are:
+
+        EstimateVariability.AVG_ABSOLUTE_DEVIATION_MEAN
+        EstimateVariability.AVG_ABSOLUTE_DEVIATION_MEDIAN
+        EstimateVariability.MEDIAN_ABSOLUTE_DEVIATION
+        EstimateVariability.VARIANCE
+        EstimateVariability.STDEV
+        EstimateVariability.RANGE
+        EstimateVariability.IQR
+
+        Args:
+            formula (EstimateVariability): name of formula to apply
+            biased (bool, optional): with or without bias correction 
+                (VARIANCE, STDEV). Defaults to None.
+
+        Returns:
+            float: estimate
         """
-        """
+        
         match formula:
             case EstimateVariability.AVG_ABSOLUTE_DEVIATION_MEAN:
                 mean = self.estimate_of_location(
@@ -176,35 +200,59 @@ class NumericalList:
                 # return np.subtract(*np.percentile(self.input, [75, 25]))
                 return sort[index_75] - sort[index_25]
 
-    def mode(self):
-        """Returns a list with a single or multiple modes of an
-        input list of float numbers.
+    def distribution(
+        self,
+        formula,
+        biased: bool=True,
+        bins: int=None,
+        weights: list[float]=None):
+        """Returns an estimate of variability according the the formula.
+        Possible types are:
 
-        Returns:
-            list: mode(s)
-        """
-        c = Counter(self.input)
-        return [k for k, v in c.items() if v == c.most_common(1)[0][1]]
-
-    def skewness(self, biased: bool):
-        """Returns biased or unbiased skewness of an input list
-        of float numbers.
+        Distribution.FREQ_TABLE
+        Distribution.COEFFICIENT_OF_SKEWNESS
+        Distribution.COEFFICIENT_OF_KURTOSIS
+        Distribution.MODE
 
         Args:
-            biased (bool): with or without bias correction
+            formula (Distribution): name of formula to apply
+            biased (bool, optional): with or without bias correction 
+                (SKEWNESS, KURTOSIS). Defaults to None.
 
         Returns:
-            float: skewness
+            float: estimate
+            ! for case Distribution.MODE: list[float]: 
+                contains a single mode or multiple nodes
         """
-        n = len(self.input)
-        mean = self.estimate_of_location(
-            formula=EstimateLocation.ARITHMETIC_MEAN)
-        stdev = self.estimate_of_variability(
-            formula=EstimateVariability.STDEV, biased=True)
-        deviation_3 = [(x-mean)**3 for x in self.input]
+        match formula:
 
-        match biased:
-            case True:
-                return sum(deviation_3)/(n*stdev**3)
-            case False:
-                return sum(deviation_3)/(n*stdev**3)*(n*n)/((n-1)*(n-2))
+            case Distribution.FREQ_TABLE:
+                return np.histogram(self.input, bins=bins, weights=weights)
+
+            case Distribution.COEFFICIENT_OF_SKEWNESS:
+                n = len(self.input)
+                mean = self.estimate_of_location(
+                    formula=EstimateLocation.ARITHMETIC_MEAN)
+                stdev = self.estimate_of_variability(
+                    formula=EstimateVariability.STDEV, biased=True)
+                m3 = [((x-mean)/stdev)**3 for x in self.input]
+                if biased:
+                    return np.mean(m3)
+                else:
+                    return np.mean(m3)*(n**2)/((n-1)*(n-2))
+
+            case Distribution.COEFFICIENT_OF_KURTOSIS:
+                n = len(self.input)
+                mean = self.estimate_of_location(
+                    formula=EstimateLocation.ARITHMETIC_MEAN)
+                stdev = self.estimate_of_variability(
+                    formula=EstimateVariability.STDEV, biased=True)
+                m4 = [((x-mean)/stdev)**4 for x in self.input]
+                if biased:
+                    return np.mean(m4)-3
+                else:
+                    return np.mean(m4)*(n**3)/((n-1)*(n-2)*(n-3)) - 3
+
+            case Distribution.MODE:
+                c = Counter(self.input)
+                return [k for k, v in c.items() if v == c.most_common(1)[0][1]]

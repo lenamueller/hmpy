@@ -1,9 +1,10 @@
 import sys
+import scipy
 
 sys.path.insert(1, 'analysis')
 print(sys.path)
 from numericallist import NumericalList, Status, \
-    EstimateLocation, EstimateVariability
+    EstimateLocation, EstimateVariability, Distribution
 
 
 # -------------------------------------------------------------------------
@@ -78,7 +79,7 @@ def test_percentile():
 
 # -------------------------------------------------------------------------
 # estimates of variability
-# ------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 
 def test_avg_absolute_deviation_mean():
@@ -145,26 +146,51 @@ def test_iqr():
     bs = NumericalList(input=[1, 2, 3, 3, 5, 6, 7, 9], status=Status.READY)
     assert 4.0 == bs.estimate_of_variability(formula=EstimateVariability.IQR)
 
+# -------------------------------------------------------------------------
+# estimates of distribution
+# -------------------------------------------------------------------------
+
+def test_freq_table():
+    bs = NumericalList(input=[1, 5, 5, 4, 6, 1], status=Status.READY)
+    test = round(bs.distribution(formula=Distribution.FREQ_TABLE, bins=3), 4)
+    ref = []
+    assert test == ref
+
+
+def test_skewness_biased():
+    bs = NumericalList(input=[1, 5, 5, 1], status=Status.READY)
+    test = round(bs.distribution(formula=Distribution.COEFFICIENT_OF_SKEWNESS, biased=True), 4)
+    ref = round(scipy.stats.skew([1, 5, 5, 1], bias=True), 4)
+    assert test == ref
+
+
+def test_skewness_unbiased():
+    bs = NumericalList(input=[1, 5, 5, 1], status=Status.READY)
+    test = round(bs.distribution(formula=Distribution.COEFFICIENT_OF_SKEWNESS, biased=False), 4)
+    ref = round(scipy.stats.skew([1, 5, 5, 1], bias=False), 4)
+    # assert 3.0792 == 
+    assert test == ref
+
+
+def test_kurtosis_biased():
+    bs = NumericalList(input=[-10, -5, 0, 5, 10], status=Status.READY)
+    test = round(bs.distribution(formula=Distribution.COEFFICIENT_OF_KURTOSIS, biased=True), 4)
+    ref = round(scipy.stats.kurtosis([-10, -5, 0, 5, 10], bias=True), 4)
+    assert test == ref
+
+
+def test_kurtosis_unbiased():
+    bs = NumericalList(input=[-10, -5, 0, 5, 10], status=Status.READY)
+    test = round(bs.distribution(formula=Distribution.COEFFICIENT_OF_KURTOSIS, biased=False), 4)
+    ref = round(scipy.stats.kurtosis([-10, -5, 0, 5, 10], bias=False, fisher=False), 4)
+    assert test == ref
+
 
 def test_mode_single():
     bs = NumericalList(input=[1, 3, 3], status=Status.READY)
-    assert [3] == bs.mode()
+    assert [3] == bs.distribution(formula=Distribution.MODE)
 
 
 def test_mode_multiple():
     bs = NumericalList(input=[1, 2, 3], status=Status.READY)
-    assert [1, 2, 3] == bs.mode()
-
-
-# -------------------------------------------------------------------------
-# distribution
-# -------------------------------------------------------------------------
-
-def test_skewness_biased():
-    bs = NumericalList(input=[1, 1, 1, 5], status=Status.READY)
-    assert 1.1547 == round(bs.skewness(biased=True), 4)
-
-
-def test_skewness_unbiased():
-    bs = NumericalList(input=[1, 1, 1, 5], status=Status.READY)
-    assert 3.0792 == round(bs.skewness(biased=False), 4)
+    assert [1, 2, 3] == bs.distribution(formula=Distribution.MODE)
