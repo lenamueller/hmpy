@@ -19,17 +19,16 @@ An open source library for common hydrological and meteorological issues.
 - extract independent events: TODO #6
 
 ### class `NumericalList`
-#### basic statistics
-- `mean_arithmetic`, `mean_geometric`, `mean_exponential`, `mean_harmonic`, `mean_median`: means
-- `mode`: mode
-- `stdev`: (un-) biased standard deviation
-- `variance`: (un-) biased variance
+#### exploratory data analysis
+- `estimate_of_location`: arithmetic mean, weighted arithmetic mean, trimmed arithmetic mean, geometric mean, exponential mean, harmonic mean, median, weighted median, percentile
+- `estimate_of_variability`: range, (un-) biased variance, (un-) biased standard deviation
+- `distribution` (mode, )
+
 - `skewness`: (un-) biased skewness
 - kurtosis: TODO #7
 - report: TODO #20
 
-
-#### distributions
+#### data distributions
 - calculate empirical distribution: TODO #8
 - fitting theoretical distribution: TODO #4
 ### class `MultiNumericalList`
