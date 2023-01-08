@@ -1,4 +1,5 @@
 from enum import Enum
+import numpy as np
 import statistics
 from collections import Counter
 
@@ -8,12 +9,16 @@ class Status(Enum):
     READY = 1
 
 
-class Mean(Enum):
-    ARITHMETIC = 0
-    GEOMETRIC = 1
-    EXPONENTIAL = 2
-    HARMONIC = 3
-    MEDIAN = 4
+class EstimateLocation(Enum):
+    ARITHMETIC_MEAN = 0
+    WEIGHTED_ARITHMETIC_MEAN = 1
+    TRIMMED_ARITHMETIC_MEAN = 2
+    GEOMETRIC_MEAN = 3
+    EXPONENTIAL_MEAN = 4
+    HARMONIC_MEAN = 5
+    MEDIAN = 6
+    WEIGHTED_MEDIAN = 7
+    PERCENTILE = 8
 
 
 class NumericalList:
@@ -37,39 +42,73 @@ class NumericalList:
         """Change status of input list."""
         self.status = Status.READY
 
-    def mean(self, formula: Mean, m: float = None):
+    def estimate_of_location(
+            self,
+            formula: EstimateLocation,
+            trim_p: int = 0,
+            weights: list[float] = [],
+            m: float = None,
+            per: int = None
+            ):
         """Returns the mean according the the formula.
         Possible types are:
 
-        - Mean.ARITHMETIC
-        - Mean.GEOMETRIC
-        - Mean.HARMONIC
-        - Mean.MEDIAN
-        - Mean.EXPONENTIAL
+        EstimateLocation.ARITHMETIC_MEAN
+        EstimateLocation.WEIGHTED_ARITHMETIC_MEAN
+        EstimateLocation.TRIMMED_ARITHMETIC_MEAN
+        EstimateLocation.GEOMETRIC_MEAN
+        EstimateLocation.EXPONENTIAL_MEAN
+        EstimateLocation.HARMONIC_MEAN
+        EstimateLocation.MEDIAN
+        EstimateLocation.WEIGHTED_MEDIAN
+        EstimateLocation.PERCENTILE
 
         Args:
-            formula (Mean): mean formula
+            formula (EstimateLocation): mean formula
+            trim_p (int): number of smallest and largest elements
+                from the numerical list which will be ignored
+                (TRIMMED_ARITHMETIC_MEAN)
+            weights (list[float]): element-wise weights
+                (WEIGHTED_ARITHMETIC_MEAN, WEIGHTED_MEDIAN)
             m (float): exponent for formula=Mean.EXPONENTIAL
+            per (int): percentile
 
         Returns:
             float: mean value
         """
+
         match formula:
-            case Mean.ARITHMETIC:
+            case EstimateLocation.ARITHMETIC_MEAN:
                 return sum(self.input)/len(self.input)
 
-            case Mean.GEOMETRIC:
+            case EstimateLocation.TRIMMED_ARITHMETIC_MEAN:
+                trimmed = sorted(self.input)[trim_p:-trim_p]
+                return sum(trimmed)/len(trimmed)
+
+            case EstimateLocation.WEIGHTED_ARITHMETIC_MEAN:
+                return sum(np.multiply(self.input, weights))/sum(weights)
+
+            case EstimateLocation.GEOMETRIC_MEAN:
                 return statistics.geometric_mean(self.input)
 
-            case Mean.HARMONIC:
+            case EstimateLocation.HARMONIC_MEAN:
                 return statistics.harmonic_mean(self.input)
 
-            case Mean.MEDIAN:
-                return statistics.median(self.input)
-
-            case Mean.EXPONENTIAL:
+            case EstimateLocation.EXPONENTIAL_MEAN:
                 n = len(self.input)
                 return (sum([x**m for x in self.input])/n)**(1/m)
+
+            case EstimateLocation.MEDIAN:
+                return statistics.median(self.input)
+
+            case EstimateLocation.WEIGHTED_MEDIAN:
+                weighted_list = []
+                for i in range(len(self.input)):
+                    weighted_list.extend([self.input[i]]*weights[i])
+                return statistics.median(weighted_list)
+
+            case EstimateLocation.PERCENTILE:
+                return np.percentile(self.input, per)
 
     def mode(self):
         """Returns a list with a single or multiple modes of an
@@ -100,7 +139,8 @@ class NumericalList:
             float: standard deviation
         """
         n = len(self.input)
-        mean = self.mean(formula=Mean.ARITHMETIC)
+        mean = self.estimate_of_location(
+            formula=EstimateLocation.ARITHMETIC_MEAN)
         deviation_squared = [(x-mean)**2 for x in self.input]
 
         match biased:
@@ -120,7 +160,8 @@ class NumericalList:
             float: variance
         """
         n = len(self.input)
-        mean = self.mean(formula=Mean.ARITHMETIC)
+        mean = self.estimate_of_location(
+            formula=EstimateLocation.ARITHMETIC_MEAN)
         deviation_squared = [(x-mean)**2 for x in self.input]
 
         match biased:
@@ -140,7 +181,8 @@ class NumericalList:
             float: skewness
         """
         n = len(self.input)
-        mean = self.mean(formula=Mean.ARITHMETIC)
+        mean = self.estimate_of_location(
+            formula=EstimateLocation.ARITHMETIC_MEAN)
         stdev = self.stdev(biased=True)
         deviation_3 = [(x-mean)**3 for x in self.input]
 
