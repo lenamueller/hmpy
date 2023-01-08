@@ -20,18 +20,19 @@ An open source library for common hydrological and meteorological issues.
 
 ### class `NumericalList`
 #### exploratory data analysis
-- `estimate_of_location`: arithmetic mean, weighted arithmetic mean, trimmed arithmetic mean, geometric mean, exponential mean, harmonic mean, median, weighted median, percentile
-- `estimate_of_variability`: range, (un-) biased variance, (un-) biased standard deviation
-- `distribution` (frequency table, (un-) biased skewness, (un-) biased kurtosis TODO #7, mode)
-
-- report: TODO #20
+- estimates of location: `arithmetic_mean`, `weighted_arithmetic_mean`, `trimmed_mean`,`geometric_mean`,`exponential_mean`,`harmonic_mean`,`median`,`weighted_median`,`percentile`
+- estimate_of_variability: `mu`, `avg_absolute_deviation_from_mean`, `avg_absolute_deviation_from_median`, `median_absolute_deviaton`,`variance`, `stdev`, `range`, `iqr`
+- estimates of distribution: `coefficient_of_skewness`, `coefficient_of_kurtosis` TODO #7, `mode`
 
 #### data distributions
 - calculate empirical distribution: TODO #8
 - fitting theoretical distribution: TODO #4
+#### Error statistics
+
 ### class `MultiNumericalList`
 - covariance: TODO #9
 - correlation: TODO #10
+
 
 ## cleaning
 - consistency: data gaps, missing values, duplicate: TODO #12
