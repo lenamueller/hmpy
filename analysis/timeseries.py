@@ -82,11 +82,11 @@ class TimeSeries:
 
         # Increment the hydrological year if it starts before 1st of January.
         for i, row in self.df.iterrows():
-            if i < datetime.datetime(
+            if i >= datetime.datetime(
                     year=i.year,
                     month=hyd_year_begin_month,
                     day=hyd_year_begin_day):
-                row["hyd_year"] -= 1
+                row["hyd_year"] += 1
 
         return self.df
 
