@@ -82,7 +82,7 @@ class NumericalList:
     # estimates of variability
     # ----------------------------------------------------------------
 
-    def _mu(self, k: int):
+    def mu(self, k: int):
         """Returns the k-th statistical moment [float] related to the 
         arithmetic mean."""
         mean = self.arithmetic_mean()
@@ -106,7 +106,7 @@ class NumericalList:
         
     def variance(self, biased: bool):
         """Returns the (biased/ unbiased) variance [float]"""
-        mu2 = self._mu(k=2)
+        mu2 = self.mu(k=2)
         if biased:
             return mu2
         else:
@@ -115,7 +115,7 @@ class NumericalList:
     def stdev(self, biased: bool):
         """Returns the (biased/ unbiased) standard deviation from 
         arithmetic mean [float]."""
-        mu2 = self._mu(k=2)
+        mu2 = self.mu(k=2)
         n = self.n
         if biased:
             return mu2**(1/2)
@@ -141,7 +141,7 @@ class NumericalList:
     def coefficient_of_skewness(self, biased: bool):
         """Returns (biased/ unbiased) skewness [float]."""
         stdev = self.stdev(biased=True)
-        mu3 = self._mu(k=3)
+        mu3 = self.mu(k=3)
         skew = mu3/stdev**3
         if biased:
             return skew
@@ -151,7 +151,7 @@ class NumericalList:
     def coefficient_of_kurtosis(self, biased:bool):
         """Returns (biased/ unbiased) kortosis [float]."""
         stdev = self.stdev(biased=True)
-        mu4 = self._mu(k=4)
+        mu4 = self.mu(k=4)
         kurt = mu4/stdev**4
         if biased:
             return kurt
