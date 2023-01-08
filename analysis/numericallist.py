@@ -21,6 +21,16 @@ class EstimateLocation(Enum):
     PERCENTILE = 8
 
 
+class EstimateVariability(Enum):
+    AVG_ABSOLUTE_DEVIATION_MEAN = 0
+    AVG_ABSOLUTE_DEVIATION_MEDIAN = 1
+    MEDIAN_ABSOLUTE_DEVIATION = 2
+    VARIANCE = 3
+    STDEV = 4
+    RANGE = 5
+    IQR = 6
+
+
 class NumericalList:
 
     def __init__(self, input: list[float], status: Status = Status.RAW):
@@ -35,7 +45,7 @@ class NumericalList:
         self.input: list[float] = input
         self.status: Status = status
 
-        if not self.status.value:
+        if (not self.status.value) or len(self.input) == 0:
             raise ValueError("Status of NumericalList object is not READY!")
 
     def set_status_ready(self):
@@ -79,11 +89,11 @@ class NumericalList:
 
         match formula:
             case EstimateLocation.ARITHMETIC_MEAN:
-                return sum(self.input)/len(self.input)
+                return np.mean(self.input)
 
             case EstimateLocation.TRIMMED_ARITHMETIC_MEAN:
                 trimmed = sorted(self.input)[trim_p:-trim_p]
-                return sum(trimmed)/len(trimmed)
+                return np.mean(trimmed)
 
             case EstimateLocation.WEIGHTED_ARITHMETIC_MEAN:
                 return sum(np.multiply(self.input, weights))/sum(weights)
@@ -108,7 +118,63 @@ class NumericalList:
                 return statistics.median(weighted_list)
 
             case EstimateLocation.PERCENTILE:
-                return np.percentile(self.input, per)
+                sort = sorted(self.input)
+                # return np.percentile(self.input, per)
+                return sort[int(per/100*len(sort))]
+
+    def estimate_of_variability(
+            self,
+            formula: EstimateVariability,
+            biased: bool = None
+            ):
+        """
+        """
+        match formula:
+            case EstimateVariability.AVG_ABSOLUTE_DEVIATION_MEAN:
+                mean = self.estimate_of_location(
+                    formula=EstimateLocation.ARITHMETIC_MEAN)
+                return np.mean([abs(i-mean) for i in self.input])
+
+            case EstimateVariability.AVG_ABSOLUTE_DEVIATION_MEDIAN:
+                median = self.estimate_of_location(
+                    formula=EstimateLocation.MEDIAN)
+                return np.mean([abs(i-median) for i in self.input])
+
+            case EstimateVariability.MEDIAN_ABSOLUTE_DEVIATION:
+                median = self.estimate_of_location(
+                    formula=EstimateLocation.MEDIAN)
+                deviations = [abs(i-median) for i in self.input]
+                return statistics.median(deviations)
+
+            case EstimateVariability.VARIANCE:
+                mean = self.estimate_of_location(
+                    formula=EstimateLocation.ARITHMETIC_MEAN)
+                deviation_squared = [(x-mean)**2 for x in self.input]
+
+                if biased:
+                    return sum(deviation_squared)/len(self.input)
+                else:
+                    return sum(deviation_squared)/(len(self.input)-1)
+
+            case EstimateVariability.STDEV:
+                mean = self.estimate_of_location(
+                    formula=EstimateLocation.ARITHMETIC_MEAN)
+                deviation_squared = [(x-mean)**2 for x in self.input]
+
+                if biased:
+                    return (sum(deviation_squared)/len(self.input))**(1/2)
+                else:
+                    return (sum(deviation_squared)/(len(self.input)-1))**(1/2)
+
+            case EstimateVariability.RANGE:
+                return max(self.input)-min(self.input)
+
+            case EstimateVariability.IQR:
+                sort = sorted(self.input)
+                index_25 = int(0.25*len(sort))
+                index_75 = int(0.75*len(sort))
+                # return np.subtract(*np.percentile(self.input, [75, 25]))
+                return sort[index_75] - sort[index_25]
 
     def mode(self):
         """Returns a list with a single or multiple modes of an
@@ -119,56 +185,6 @@ class NumericalList:
         """
         c = Counter(self.input)
         return [k for k, v in c.items() if v == c.most_common(1)[0][1]]
-
-    def range(self):
-        """Returns the range of an input list of float numbers.
-
-        Returns:
-            float: range
-        """
-        return (max(self.input)-min(self.input))
-
-    def stdev(self, biased: bool):
-        """Returns biased or unbiased standard deviation of an input
-        list of float numbers.
-
-        Args:
-            biased (bool): with or without bias correction
-
-        Returns:
-            float: standard deviation
-        """
-        n = len(self.input)
-        mean = self.estimate_of_location(
-            formula=EstimateLocation.ARITHMETIC_MEAN)
-        deviation_squared = [(x-mean)**2 for x in self.input]
-
-        match biased:
-            case True:
-                return (sum(deviation_squared)/n)**(1/2)
-            case False:
-                return (sum(deviation_squared)/(n-1))**(1/2)
-
-    def var(self, biased: bool):
-        """Returns biased or unbiased variance of an input list
-        of float numbers.
-
-        Args:
-            biased (bool): with or without bias correction
-
-        Returns:
-            float: variance
-        """
-        n = len(self.input)
-        mean = self.estimate_of_location(
-            formula=EstimateLocation.ARITHMETIC_MEAN)
-        deviation_squared = [(x-mean)**2 for x in self.input]
-
-        match biased:
-            case True:
-                return sum(deviation_squared)/n
-            case False:
-                return sum(deviation_squared)/(n-1)
 
     def skewness(self, biased: bool):
         """Returns biased or unbiased skewness of an input list
@@ -183,7 +199,8 @@ class NumericalList:
         n = len(self.input)
         mean = self.estimate_of_location(
             formula=EstimateLocation.ARITHMETIC_MEAN)
-        stdev = self.stdev(biased=True)
+        stdev = self.estimate_of_variability(
+            formula=EstimateVariability.STDEV, biased=True)
         deviation_3 = [(x-mean)**3 for x in self.input]
 
         match biased:
