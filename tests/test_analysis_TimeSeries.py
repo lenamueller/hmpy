@@ -82,7 +82,7 @@ def test_hyd_year():
                 datetime.datetime(2000, 1, 2),
                 datetime.datetime(2000, 12, 1),],
             "discharge": [1, 2, 3],
-            "hyd_year": [1999, 1999, 2000]
+            "hyd_year": [2000, 2000, 2001]
             }).set_index("date")
 
     assert_frame_equal(df_test, df_ref)
