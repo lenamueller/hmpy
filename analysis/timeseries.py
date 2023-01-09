@@ -1,6 +1,6 @@
 import collections
 import matplotlib.pyplot as plt
-import pandas
+import pandas as pd
 from enum import Enum
 import numpy as np
 
@@ -14,23 +14,23 @@ class TimeSeries:
 
     def __init__(
             self,
-            df: pandas.DataFrame,
+            df: pd.DataFrame,
             status: Status = Status.RAW):
         """Constructor
 
         Args:
-            df (pandas.DataFrame): contains at least "date" as index
+            df (pd.DataFrame): contains at least "date" as index
             status (Status, optional): Status of the NumericalList,
                 which can be set or turned to Status.READY, if the
                 data is been cleaned. Defaults to Status.RAW.
         """
-        self.df: pandas.DataFrame = df
+        self.df: pd.DataFrame = df
         self.status: Status = status
 
     def subset_timeframe(
             self,
-            date_start: pandas.Timestamp,
-            date_end: pandas.Timestamp):
+            date_start: pd.Timestamp,
+            date_end: pd.Timestamp):
         """Returns a sub-DataFrame based on a start and end date
         (both included).
 
@@ -86,7 +86,7 @@ class TimeSeries:
         
         # Increment the hydrological year if it starts before 1st of January.
         for index, _ in df_copy.iterrows():
-            hyd_new_year = pandas.Timestamp(
+            hyd_new_year = pd.Timestamp(
                 year=index.year,
                 month=hyd_year_begin_month,
                 day=hyd_year_begin_day)
@@ -100,8 +100,8 @@ class TimeSeries:
 
     def principal_values(
             self,
-            date_start: pandas.Timestamp,
-            date_end: pandas.Timestamp,
+            date_start: pd.Timestamp,
+            date_end: pd.Timestamp,
             varname: str,
             aggr_col_name: str = "",
             months: list[int] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]):
@@ -167,61 +167,22 @@ class TimeSeries:
         return hhx, hx, mhx, mx, mnx, nx, nnx
 
     def ausreisser(self):
+        solving = "drop_outlier"
+        match solving:
+            case "drop_outlier":
+                pass
+            case "cap_outlier":
+                pass
         return 0
 
-    def boxplot(self):
-        return 0
-
-    def number_duplicates(self):
-        """Returns the number of duplicate dates.
-
-        Args:
-            df (pd.DataFrame): _description_
-
-        Returns:
-            int: number of duplicates
-        """
-        # Check the number of duplicates.
+    def duplicates(self):
+        """Returns the number of duplicate dates [int]."""
         dates = list(self.df.index.values)
         n_duplicates = len([item for item, count in collections.Counter(dates).items() if count > 1])
         return n_duplicates
 
-    def completeness(self):
-        
-
-        plt.figure(figsize=(10, 8))
-        plt.imshow(self.df.isna(), aspect="auto", interpolation="nearest", cmap="gray")
-        plt.xlabel("Column Number")
-        plt.ylabel("Sample Number");
-
-        # missing values per sample
-        
-        # missing values per feature
-        
-        return 0
-
-# import pandas as pd
-# import datetime 
-
-# df = pd.DataFrame({
-#         "date": [
-#             datetime.datetime(1999, 12, 1),
-#             datetime.datetime(2000, 1, 2),
-#             datetime.datetime(2000, 12, 1)],
-#         "discharge": [1, 2, 3]
-#         }).set_index("date")
-
-# ts = TimeSeries(df=df)
-# ts.hyd_year(hyd_year_begin_month=11, hyd_year_begin_day=1)
-
-# # create reference df
-# df_ref = pd.DataFrame({
-#         "date": [
-#             datetime.datetime(1999, 12, 1),
-#             datetime.datetime(2000, 1, 2),
-#             datetime.datetime(2000, 12, 1),],
-#         "discharge": [1, 2, 3],
-#         "hyd_year": [2000, 2000, 2001]
-#         }).set_index("date")
-
-# print(ts.df, "\n\n", df_ref)
+    def missing_days(self):
+        """Returns the number of missing days [int]"""
+        diff = (self.df.index[-1]-self.df.index[0]).days
+        n_missing = (diff+1) - len(self.df)
+        return n_missing
