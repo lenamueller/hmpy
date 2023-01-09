@@ -1,5 +1,6 @@
+import collections
+import matplotlib.pyplot as plt
 import pandas
-import datetime
 from enum import Enum
 import numpy as np
 
@@ -28,8 +29,8 @@ class TimeSeries:
 
     def subset_timeframe(
             self,
-            date_start: datetime.datetime,
-            date_end: datetime.datetime):
+            date_start: pandas.Timestamp,
+            date_end: pandas.Timestamp):
         """Returns a sub-DataFrame based on a start and end date
         (both included).
 
@@ -40,7 +41,8 @@ class TimeSeries:
         Returns:
             pd.DataFrame: sub-DataFrame with "date" as index
         """
-        return self.df.loc[date_start:date_end]
+        df_sub = self.df.loc[date_start:date_end]
+        return TimeSeries(df_sub)
 
     def subset_period(
             self,
@@ -54,11 +56,12 @@ class TimeSeries:
         Returns:
             pd.DataFrame: sub-DataFrame with "date" as index
         """
-        self.df["month"] = self.df.index
-        self.df["month"] = [int(x.month) for x in self.df["month"].tolist()]
-        self.df = self.df[self.df["month"].isin(months)]
-        self.df = self.df.drop(columns=["month"], axis=1)
-        return self.df
+        df_sub = self.df.copy(deep=True)
+        df_sub["month"] = df_sub.index
+        df_sub["month"] = [int(x.month) for x in df_sub["month"].tolist()]
+        df_sub = df_sub[df_sub["month"].isin(months)]
+        df_sub = df_sub.drop(columns=["month"], axis=1)
+        return TimeSeries(df_sub)
 
     def hyd_year(
             self,
@@ -76,24 +79,29 @@ class TimeSeries:
         Returns:
             pd.DataFrame: given input DataFrame with new column "hyd_year"
         """
-
+        df_copy = self.df.copy(deep=True)
+        
         # Initialize hydrological year with calendric year.
-        self.df["hyd_year"] = self.df.index.year
-
+        df_copy['hyd_year'] = df_copy.index.year
+        
         # Increment the hydrological year if it starts before 1st of January.
-        for i, row in self.df.iterrows():
-            if i >= datetime.datetime(
-                    year=i.year,
-                    month=hyd_year_begin_month,
-                    day=hyd_year_begin_day):
-                row["hyd_year"] += 1
+        for index, _ in df_copy.iterrows():
+            hyd_new_year = pandas.Timestamp(
+                year=index.year,
+                month=hyd_year_begin_month,
+                day=hyd_year_begin_day)
+            
+            if index >= hyd_new_year:
+                df_copy.loc[index,"hyd_year"] = int(index.year + 1)
+            else:
+                df_copy.loc[index,"hyd_year"] = int(index.year)
 
-        return self.df
+        return TimeSeries(df_copy)
 
     def principal_values(
             self,
-            date_start: datetime.datetime,
-            date_end: datetime.datetime,
+            date_start: pandas.Timestamp,
+            date_end: pandas.Timestamp,
             varname: str,
             aggr_col_name: str = "",
             months: list[int] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]):
@@ -126,30 +134,94 @@ class TimeSeries:
                 HHX, HX, MX, NX, NNX
         """
 
+        # Create new TimeSeries instance
+        df_copy = self.df.copy(deep=True)
+        ts_new = TimeSeries(df=df_copy)
+        
         # Derive highest and lowest value ever observed
-        hhx = np.round(np.max(self.df[varname]), 2)
-        nnx = np.round(np.min(self.df[varname]), 2)
+        hhx = np.round(np.max(ts_new.df[varname]), 2)
+        nnx = np.round(np.min(ts_new.df[varname]), 2)
 
-        # Limit data to timeframe and month
-        self.df = self.subset_timeframe(date_start, date_end)
-        self.df = self.subset_period(months)
+        # limit data to timeframe and months
+        ts_new = (ts_new.subset_timeframe(date_start, date_end)).subset_period(months)
+        df_new = ts_new.df
 
         # Use year from index to aggregate if no other aggregation
         # column name is given.
         if aggr_col_name == "":
             aggr_col_name = "year"
-            self.df[aggr_col_name] = self.df.index.year
+            df_new[aggr_col_name] = df_new.index.year
             
 
-        df_max = self.df.groupby([aggr_col_name]).max()
-        df_min = self.df.groupby([aggr_col_name]).min()
-        df_mean = self.df.groupby([aggr_col_name]).mean()
+        df_max = df_new.groupby([aggr_col_name]).max()
+        df_min = df_new.groupby([aggr_col_name]).min()
+        df_mean = df_new.groupby([aggr_col_name]).mean()
 
         # Calculate other principal values
-        hx = np.round(np.max(self.df[varname]), 2)
+        hx = np.round(np.max(df_new[varname]), 2)
         mhx = df_max[varname].mean().__round__(2)
         mx = df_mean[varname].mean().__round__(2)
         mnx = df_min[varname].mean().__round__(2)
-        nx = np.round(np.min(self.df[varname]), 2)
+        nx = np.round(np.min(df_new[varname]), 2)
 
         return hhx, hx, mhx, mx, mnx, nx, nnx
+
+    def ausreisser(self):
+        return 0
+
+    def boxplot(self):
+        return 0
+
+    def number_duplicates(self):
+        """Returns the number of duplicate dates.
+
+        Args:
+            df (pd.DataFrame): _description_
+
+        Returns:
+            int: number of duplicates
+        """
+        # Check the number of duplicates.
+        dates = list(self.df.index.values)
+        n_duplicates = len([item for item, count in collections.Counter(dates).items() if count > 1])
+        return n_duplicates
+
+    def completeness(self):
+        
+
+        plt.figure(figsize=(10, 8))
+        plt.imshow(self.df.isna(), aspect="auto", interpolation="nearest", cmap="gray")
+        plt.xlabel("Column Number")
+        plt.ylabel("Sample Number");
+
+        # missing values per sample
+        
+        # missing values per feature
+        
+        return 0
+
+# import pandas as pd
+# import datetime 
+
+# df = pd.DataFrame({
+#         "date": [
+#             datetime.datetime(1999, 12, 1),
+#             datetime.datetime(2000, 1, 2),
+#             datetime.datetime(2000, 12, 1)],
+#         "discharge": [1, 2, 3]
+#         }).set_index("date")
+
+# ts = TimeSeries(df=df)
+# ts.hyd_year(hyd_year_begin_month=11, hyd_year_begin_day=1)
+
+# # create reference df
+# df_ref = pd.DataFrame({
+#         "date": [
+#             datetime.datetime(1999, 12, 1),
+#             datetime.datetime(2000, 1, 2),
+#             datetime.datetime(2000, 12, 1),],
+#         "discharge": [1, 2, 3],
+#         "hyd_year": [2000, 2000, 2001]
+#         }).set_index("date")
+
+# print(ts.df, "\n\n", df_ref)

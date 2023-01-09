@@ -3,8 +3,7 @@ import datetime
 import sys
 from pandas.testing import assert_frame_equal
 
-sys.path.insert(1, 'analysis')
-print(sys.path)
+sys.path.insert(1, '/home/lena/Documents/Projekte/hmpy/analysis')
 from timeseries import TimeSeries
 
 
@@ -19,11 +18,10 @@ def test_subset_timeframe():
                 datetime.datetime(2000, 1, 4)],
             "discharge": [12, 13, 14, 15]
     }).set_index("date")
-
-    ts = TimeSeries(df=df)
-    df_test = ts.subset_timeframe(
-                    date_start=datetime.datetime(2000, 1, 2),
-                    date_end=datetime.datetime(2000, 1, 3))
+    ts = TimeSeries(df)
+    test = ts.subset_timeframe(
+            date_start=datetime.datetime(2000, 1, 2),
+            date_end=datetime.datetime(2000, 1, 3))
 
     # create reference df
     df_ref = pd.DataFrame({
@@ -33,7 +31,7 @@ def test_subset_timeframe():
             "discharge": [13, 14]
     }).set_index("date")
 
-    assert_frame_equal(df_test, df_ref)
+    assert_frame_equal(test.df, df_ref)
 
 
 def test_subset_period():
@@ -48,7 +46,7 @@ def test_subset_period():
             }).set_index("date")
 
     ts = TimeSeries(df=df)
-    df_test = ts.subset_period(months=[2, 3])
+    test = ts.subset_period(months=[2, 3])
 
     # create reference df
     df_ref = pd.DataFrame({
@@ -58,7 +56,7 @@ def test_subset_period():
             "discharge": [13, 14]
             }).set_index("date")
 
-    assert_frame_equal(df_test, df_ref)
+    assert_frame_equal(test.df, df_ref)
 
 
 def test_hyd_year():
@@ -73,7 +71,7 @@ def test_hyd_year():
             }).set_index("date")
 
     ts = TimeSeries(df=df)
-    df_test = ts.hyd_year(hyd_year_begin_month=11, hyd_year_begin_day=1)
+    test = ts.hyd_year(hyd_year_begin_month=11, hyd_year_begin_day=1)
 
     # create reference df
     df_ref = pd.DataFrame({
@@ -85,7 +83,7 @@ def test_hyd_year():
             "hyd_year": [2000, 2000, 2001]
             }).set_index("date")
 
-    assert_frame_equal(df_test, df_ref)
+    assert_frame_equal(test.df, df_ref)
 
 
 def test_principal_values_given_aggr_col_name():
