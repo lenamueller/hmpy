@@ -45,3 +45,6 @@ An open source library for common hydrological and meteorological issues.
 - plot duration curve: TODO #17
 - plot wind rose: TODO #18
 - plot atmospheric sounding: TODO #19
+
+# example
+Run example with `jupyter notebook` within the virtual environment.
