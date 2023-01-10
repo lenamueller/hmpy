@@ -1,18 +1,22 @@
 .vscode/settings.json
+.ipynb_checkpoints/*
+.pytest_cache/*
+.vscode/*
 
 venv/*
+docs/*
+examples/*
+
+dist/*
+flyingfish.egg-info/*
+
 
 tests/__pycache__/*
-cleaning/__pycache__/*
-analysis/__pycache__/*
-visualization/__pycache__/*
 
-visualization/plot.py
-requirements_backup_2022_11_14
+hmpy/__pycache__/*
+hmpy/main.py
+hmpy/other.py
+
 todo.md
-main.py
-other.py
-
-docs/*
-example/*
-.ipynb_checkpoints/*
+hmpy/plot.py
+hmpy/write_report.py
