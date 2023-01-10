@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "hmpy"
+name = "flyingfish"
 version = "0.0.1"
 authors = [
   { name="Lena Marie Müller", email="lenamariemue@gmail.com" },

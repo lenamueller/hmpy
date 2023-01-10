@@ -1,9 +1,8 @@
 import pandas as pd
 import datetime
-import sys
 from pandas.testing import assert_frame_equal
 
-from hmpy.timeseries import TimeSeries
+from flyingfish.timeseries import TimeSeries
 
 
 def test_subset_timeframe():

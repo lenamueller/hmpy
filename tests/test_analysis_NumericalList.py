@@ -1,7 +1,6 @@
-import sys
 import scipy
 
-from hmpy.numericallist import NumericalList, Status
+from flyingfish.numericallist import NumericalList, Status
 
 
 # -------------------------------------------------------------------------
