@@ -8,7 +8,7 @@ docs/*
 examples/*
 
 dist/*
-hmpy.egg-info/*
+flyingfish.egg-info/*
 
 
 tests/__pycache__/*
