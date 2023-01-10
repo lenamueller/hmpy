@@ -1,4 +1,4 @@
-<img align="right" src="images/logo.svg" alt="logo" width="175"/>   
+<img align="right" src="logo.svg" alt="logo" width="175"/>   
 
 [![Repo status - in process](https://img.shields.io/static/v1?label=Repo+status&message=in+process&color=90EE90&style=for-the-badge)](https://)
 [![contributions - welcome](https://img.shields.io/static/v1?label=contributions&message=welcome&color=90EE90&style=for-the-badge)](https://)

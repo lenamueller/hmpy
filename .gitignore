@@ -4,9 +4,11 @@
 .vscode/*
 
 venv/*
-
 docs/*
 examples/*
+
+dist/*
+hmpy.egg-info/*
 
 
 tests/__pycache__/*
@@ -18,4 +20,3 @@ hmpy/other.py
 todo.md
 hmpy/plot.py
 hmpy/write_report.py
-
