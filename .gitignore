@@ -11,10 +11,11 @@ examples/*
 
 tests/__pycache__/*
 
-hmpy/cleaning/__pycache__/*
-hmpy/analysis/__pycache__/*
-hmpy/visualization/__pycache__/*
+hmpy/__pycache__/*
 hmpy/main.py
 hmpy/other.py
 
 todo.md
+hmpy/plot.py
+hmpy/write_report.py
+

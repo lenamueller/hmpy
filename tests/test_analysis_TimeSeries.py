@@ -3,8 +3,7 @@ import datetime
 import sys
 from pandas.testing import assert_frame_equal
 
-sys.path.insert(1, '/home/lena/Documents/Projekte/hmpy/analysis')
-from timeseries import TimeSeries
+from hmpy.timeseries import TimeSeries
 
 
 def test_subset_timeframe():

@@ -1,8 +1,7 @@
 import sys
 import scipy
 
-sys.path.insert(1, '/home/lena/Documents/Projekte/hmpy/analysis')
-from numericallist import NumericalList, Status
+from hmpy.numericallist import NumericalList, Status
 
 
 # -------------------------------------------------------------------------
