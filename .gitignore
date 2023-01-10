@@ -10,7 +10,7 @@ examples/*
 dist/*
 flyingfish.egg-info/*
 
-
+flyingfish/__pycache__/*
 tests/__pycache__/*
 
 hmpy/__pycache__/*
